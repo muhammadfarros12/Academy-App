@@ -2,6 +2,7 @@ package com.farroos.academy.ui.reader
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.farroos.academy.R
 import com.farroos.academy.ui.reader.content.ModuleContentFragment
 import com.farroos.academy.ui.reader.list.ModuleListFragment
@@ -16,10 +17,18 @@ class CourseReaderActivity : AppCompatActivity(), CourseReaderCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_course_reader)
 
+        val viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.NewInstanceFactory()
+        )[CourseReaderViewModel::class.java]
+
         val bundle = intent.extras
         if (bundle != null) {
             val courseId = bundle.getString(EXTRA_COURSE_ID)
             if (courseId != null) {
+
+                viewModel.setSelectedCourse(courseId)
+
                 populateFragment()
             }
         }
@@ -27,7 +36,8 @@ class CourseReaderActivity : AppCompatActivity(), CourseReaderCallback {
 
     override fun moveTo(position: Int, moduleId: String) {
         val fragment = ModuleContentFragment.newInstance()
-        supportFragmentManager.beginTransaction().add(R.id.frame_container, fragment ,ModuleContentFragment.TAG)
+        supportFragmentManager.beginTransaction()
+            .add(R.id.frame_container, fragment, ModuleContentFragment.TAG)
             .addToBackStack(null)
             .commit()
     }
@@ -40,17 +50,16 @@ class CourseReaderActivity : AppCompatActivity(), CourseReaderCallback {
         }
     }
 
-    private fun populateFragment(){
+    private fun populateFragment() {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         var fragment = supportFragmentManager.findFragmentByTag(ModuleListFragment.TAG)
-        if (fragment == null){
+        if (fragment == null) {
             fragment = ModuleListFragment.newInstance()
             fragmentTransaction.add(R.id.frame_container, fragment, ModuleListFragment.TAG)
             fragmentTransaction.addToBackStack(null)
         }
         fragmentTransaction.commit()
     }
-
 
 
 }

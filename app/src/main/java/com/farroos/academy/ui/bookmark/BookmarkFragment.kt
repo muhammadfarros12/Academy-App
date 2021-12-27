@@ -1,16 +1,16 @@
 package com.farroos.academy.ui.bookmark
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ShareCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.farroos.academy.R
 import com.farroos.academy.data.CourseEntity
 import com.farroos.academy.databinding.FragmentBookmarkBinding
-import com.farroos.academy.utils.DataDummy
 
 
 class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
@@ -29,12 +29,19 @@ class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (activity != null){
-            val courses = DataDummy.generateDummyCourses()
+        if (activity != null) {
+
+            val viewModel = ViewModelProvider(
+                this,
+                ViewModelProvider.NewInstanceFactory()
+            )[BookmarkViewModel::class.java]
+            val courses = viewModel.getBookmarks()
+
+            //val courses = DataDummy.generateDummyCourses()
             val adapter = BookmarkAdapter(this)
             adapter.setCourses(courses)
 
-            with(binding.rvBookmark){
+            with(binding.rvBookmark) {
                 layoutManager = LinearLayoutManager(context)
                 setHasFixedSize(true)
                 this.adapter = adapter
@@ -44,7 +51,7 @@ class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
     }
 
     override fun onShareClick(course: CourseEntity) {
-        if (activity != null){
+        if (activity != null) {
             val mimeType = "text/plain"
             ShareCompat.IntentBuilder
                 .from(requireActivity())

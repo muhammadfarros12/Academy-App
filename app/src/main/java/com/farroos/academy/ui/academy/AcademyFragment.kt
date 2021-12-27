@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.farroos.academy.databinding.FragmentAcademyBinding
-import com.farroos.academy.utils.DataDummy
 
 class AcademyFragment : Fragment() {
 
@@ -25,7 +25,14 @@ class AcademyFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (activity != null) {
-            val courses = DataDummy.generateDummyCourses()
+
+            val viewModel = ViewModelProvider(
+                this,
+                ViewModelProvider.NewInstanceFactory()
+            )[AcademyViewModel::class.java]
+            val courses = viewModel.getCourses()
+
+            // val courses = DataDummy.generateDummyCourses()
             val academyAdapter = AcademyAdapter()
             academyAdapter.setCourses(courses)
 

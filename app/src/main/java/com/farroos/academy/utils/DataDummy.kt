@@ -64,7 +64,7 @@ object DataDummy {
         return courses
     }
 
-    fun generateDummyModules(courseId: String): List<ModuleEntity> {
+    fun generateDummyModules(courseId: String): ArrayList<ModuleEntity> {
 
         val modules = ArrayList<ModuleEntity>()
 

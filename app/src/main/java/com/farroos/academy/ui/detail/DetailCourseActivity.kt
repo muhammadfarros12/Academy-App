@@ -1,11 +1,9 @@
 package com.farroos.academy.ui.detail
 
 import android.content.Intent
-import android.gesture.GestureLibraries
 import android.os.Bundle
-import android.provider.ContactsContract
-import android.view.RoundedCorner
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -16,7 +14,6 @@ import com.farroos.academy.data.CourseEntity
 import com.farroos.academy.databinding.ActivityDetailCourseBinding
 import com.farroos.academy.databinding.ContentDetailCourseBinding
 import com.farroos.academy.ui.reader.CourseReaderActivity
-import com.farroos.academy.utils.DataDummy
 
 class DetailCourseActivity : AppCompatActivity() {
 
@@ -40,41 +37,55 @@ class DetailCourseActivity : AppCompatActivity() {
 
         val adapter = DetailCourseAdapter()
 
+        val viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.NewInstanceFactory()
+        )[DetailCourseViewModel::class.java]
+
         val extras = intent.extras
-        if (extras != null){
+        if (extras != null) {
             val courseId = extras.getString(EXTRA_COURSE)
-            if (courseId != null){
-                val modules = DataDummy.generateDummyModules(courseId)
+            if (courseId != null) {
+
+                viewModel.selectedCourse(courseId)
+                val modules = viewModel.getModules()
+
+                // val modules = DataDummy.generateDummyModules(courseId)
                 adapter.setModules(modules)
-                for (course in DataDummy.generateDummyCourses()){
-                    if (course.courseId == courseId){
-                        popularCourse(course)
-                    }
-                }
+                populateCourse(viewModel.getCourse() as CourseEntity)
+//                for (course in DataDummy.generateDummyCourses()){
+//                    if (course.courseId == courseId){
+//                        popularCourse(course)
+//                    }
+//                }
             }
         }
 
 
-        with(detailContentBinding.rvModule){
+        with(detailContentBinding.rvModule) {
             isNestedScrollingEnabled = false
             layoutManager = LinearLayoutManager(this@DetailCourseActivity)
             setHasFixedSize(true)
             this.adapter = adapter
-            val dividerItemDecoration = DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)
+            val dividerItemDecoration =
+                DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)
             addItemDecoration(dividerItemDecoration)
         }
     }
 
-    private fun popularCourse(courseEntity: CourseEntity){
+    private fun populateCourse(courseEntity: CourseEntity) {
         detailContentBinding.textTitle.text = courseEntity.title
         detailContentBinding.textDescription.text = courseEntity.description
-        detailContentBinding.textDate.text = resources.getString(R.string.deadline_date, courseEntity.deadline)
+        detailContentBinding.textDate.text =
+            resources.getString(R.string.deadline_date, courseEntity.deadline)
 
         Glide.with(this)
             .load(courseEntity.imagePath)
             .transform(RoundedCorners(20))
-            .apply(RequestOptions.placeholderOf(R.drawable.ic_loading)
-                .error(R.drawable.ic_error))
+            .apply(
+                RequestOptions.placeholderOf(R.drawable.ic_loading)
+                    .error(R.drawable.ic_error)
+            )
             .into(detailContentBinding.imagePoster)
 
         detailContentBinding.btnStart.setOnClickListener {

@@ -2,23 +2,24 @@ package com.farroos.academy.ui.reader.list
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.farroos.academy.R
 import com.farroos.academy.data.ModuleEntity
 import com.farroos.academy.databinding.FragmentMooduleListBinding
 import com.farroos.academy.ui.reader.CourseReaderActivity
 import com.farroos.academy.ui.reader.CourseReaderCallback
-import com.farroos.academy.ui.reader.content.ModuleContentFragment
-import com.farroos.academy.utils.DataDummy
+import com.farroos.academy.ui.reader.CourseReaderViewModel
 
 class ModuleListFragment : Fragment(), MyAdapterListener {
 
     private lateinit var binding: FragmentMooduleListBinding
+
+    private lateinit var viewModel: CourseReaderViewModel
 
     companion object {
         val TAG: String = ModuleListFragment::class.java.simpleName
@@ -40,8 +41,15 @@ class ModuleListFragment : Fragment(), MyAdapterListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel = ViewModelProvider(
+            requireActivity(),
+            ViewModelProvider.NewInstanceFactory()
+        )[CourseReaderViewModel::class.java]
+
         adapter = ModuleListAdapter(this)
-        populateRecyclerView(DataDummy.generateDummyModules("a14"))
+        populateRecyclerView(viewModel.getModules())
+        // populateRecyclerView(DataDummy.generateDummyModules("a14"))
     }
 
     override fun onAttach(context: Context) {
@@ -51,15 +59,17 @@ class ModuleListFragment : Fragment(), MyAdapterListener {
 
     override fun onItemClicked(position: Int, moduleId: String) {
         courseReaderCallback.moveTo(position, moduleId)
+        viewModel.setSelectedModule(moduleId)
     }
 
-    private fun populateRecyclerView(modules: List<ModuleEntity>){
-        with(binding){
+    private fun populateRecyclerView(modules: List<ModuleEntity>) {
+        with(binding) {
             progressBar.visibility = View.GONE
             adapter.setModules(modules)
             rvModule.layoutManager = LinearLayoutManager(context)
             rvModule.adapter = adapter
-            val dividerDecoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+            val dividerDecoration =
+                DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
             rvModule.addItemDecoration(dividerDecoration)
         }
     }
