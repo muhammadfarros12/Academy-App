@@ -20,7 +20,7 @@ class CourseReaderActivity : AppCompatActivity(), CourseReaderCallback {
         if (bundle != null) {
             val courseId = bundle.getString(EXTRA_COURSE_ID)
             if (courseId != null) {
-                popularFragment()
+                populateFragment()
             }
         }
     }
@@ -40,9 +40,9 @@ class CourseReaderActivity : AppCompatActivity(), CourseReaderCallback {
         }
     }
 
-    private fun popularFragment(){
-        var fragment = supportFragmentManager.findFragmentByTag(ModuleListFragment.TAG)
+    private fun populateFragment(){
         val fragmentTransaction = supportFragmentManager.beginTransaction()
+        var fragment = supportFragmentManager.findFragmentByTag(ModuleListFragment.TAG)
         if (fragment == null){
             fragment = ModuleListFragment.newInstance()
             fragmentTransaction.add(R.id.frame_container, fragment, ModuleListFragment.TAG)

@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.farroos.academy.data.ModuleEntity
-import com.farroos.academy.databinding.ItemsModuleListBinding
+import com.farroos.academy.databinding.ItemsModuleListCustomBinding
 
 class ModuleListAdapter internal constructor(private val listener: MyAdapterListener) :
     RecyclerView.Adapter<ModuleListAdapter.ModuleViewHolder>() {
@@ -17,7 +17,7 @@ class ModuleListAdapter internal constructor(private val listener: MyAdapterList
         this.listModules.addAll(modules)
     }
 
-    inner class ModuleViewHolder(private val binding: ItemsModuleListBinding) :
+    inner class ModuleViewHolder(private val binding: ItemsModuleListCustomBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(module: ModuleEntity) {
@@ -28,7 +28,7 @@ class ModuleListAdapter internal constructor(private val listener: MyAdapterList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModuleViewHolder {
         val binding =
-            ItemsModuleListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ItemsModuleListCustomBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ModuleViewHolder(binding)
     }
 
